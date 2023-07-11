@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guoyin.system.mapper.SysMarkFileMapper">
+
+    <resultMap type="SysMarkFile" id="SysMarkFileResult">
+        <result property="fileId"    column="file_id"    />
+        <result property="filedirId"    column="filedir_id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="fileSize"    column="file_size"    />
+        <result property="filePath"    column="file_path"    />
+        <result property="toUser"    column="to_user"    />
+        <result property="fileState"    column="file_state"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectSysMarkFileVo">
+        select file_id, filedir_id, file_name, file_size, file_path, to_user, file_state, create_time from sys_MarkFile
+    </sql>
+
+    <!--    <select id="selectSysMarkFileList" parameterType="SysMarkFile" resultMap="SysMarkFileResult">
+            <include refid="selectSysMarkFileVo"/>
+            <where>
+                <if test="filedirId != null "> and filedir_id = #{filedirId}</if>
+                <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+                <if test="fileSize != null  and fileSize != ''"> and file_size like concat('%', #{fileSize}, '%')</if>
+                <if test="filePath != null  and filePath != ''"> and file_path = #{filePath}</if>
+                <if test="toUser != null  and toUser != ''"> and to_user = #{toUser}</if>
+                <if test="fileState != null  and fileState != ''"> and file_state = #{fileState}</if>
+                <if test="createTime != null  and createTime != ''"> and create_time = #{createTime}</if>
+
+            </where>
+        </select>-->
+
+    <select id="selectSysMarkFileList" parameterType="SysMarkFile" resultMap="SysMarkFileResult">
+        select b.file_id, b.filedir_id, b.file_name, b.file_size, b.file_path, b.to_user, b.file_state, b.create_time, d.filedir_name from sys_MarkFile b
+        left join sys_filedir d on b.filedir_id = d.filedir_id
+        where b.file_id != ''
+        <if test="filedirId != null "> and b.filedir_id = #{filedirId}</if>
+        <if test="fileName != null  and fileName != ''"> and b.file_name like concat('%', #{fileName}, '%')</if>
+        <if test="fileSize != null  and fileSize != ''"> and b.file_size like concat('%', #{fileSize}, '%')</if>
+        <if test="filePath != null  and filePath != ''"> and b.file_path like concat('%', #{filePath}, '%')</if>
+        <if test="toUser != null  and toUser != ''"> and b.to_user like concat('%', #{toUser}, '%')</if>
+        <if test="fileState != null  and fileState != ''"> and b.file_state = #{fileState}</if>
+        <if test="createTime != null  and createTime != ''"> and b.create_time = #{createTime}</if>
+        <if test="filedirId != null and filedirId != ''"> AND b.filedir_id = #{filedirId} </if>
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+    </select>
+
+    <select id="selectSysMarkFileListByUser" parameterType="SysMarkFile" resultMap="SysMarkFileResult">
+        select b.file_id, b.filedir_id, b.file_name, b.file_size, b.file_path, b.to_user, b.file_state, b.create_time, d.filedir_name from sys_MarkFile b
+        left join sys_filedir d on b.filedir_id = d.filedir_id
+        where b.file_id != ''
+        <if test="filedirId != null "> and b.filedir_id = #{filedirId}</if>
+        <if test="fileName != null  and fileName != ''"> and b.file_name like concat('%', #{fileName}, '%')</if>
+        <if test="fileSize != null  and fileSize != ''"> and b.file_size like concat('%', #{fileSize}, '%')</if>
+        <if test="filePath != null  and filePath != ''"> and b.file_path like concat('%', #{filePath}, '%')</if>
+        <if test="toUser != null  and toUser != ''"> and b.to_user like concat('%', #{toUser}, '%')</if>
+        <if test="fileState != null  and fileState != ''"> and b.file_state = #{fileState}</if>
+        <if test="createTime != null  and createTime != ''"> and b.create_time = #{createTime}</if>
+        <if test="filedirId != null and filedirId != ''"> and b.filedir_id = #{filedirId}</if>
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+    </select>
+
+
+    <select id="selectSysMarkFileByFileNameAndFileDirId" resultMap="SysMarkFileResult">
+        <include refid="selectSysMarkFileVo"/>
+        where file_name =  #{fileName} and filedir_id = #{fileDirId}
+    </select>
+
+    <select id="selectSysMarkFileByFileId" parameterType="Long" resultMap="SysMarkFileResult">
+        <include refid="selectSysMarkFileVo"/>
+        where file_id = #{fileId}
+    </select>
+
+    <insert id="insertSysMarkFile" parameterType="SysMarkFile" useGeneratedKeys="true" keyProperty="fileId">
+        insert into sys_MarkFile
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="filedirId != null">filedir_id,</if>
+            <if test="fileName != null and fileName != ''">file_name,</if>
+            <if test="fileSize != null">file_size,</if>
+            <if test="filePath != null">file_path,</if>
+            <if test="toUser != null">to_user,</if>
+            <if test="fileState != null">file_state,</if>
+            <if test="createTime != null">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="filedirId != null">#{filedirId},</if>
+            <if test="fileName != null and fileName != ''">#{fileName},</if>
+            <if test="fileSize != null">#{fileSize},</if>
+            <if test="filePath != null">#{filePath},</if>
+            <if test="toUser != null">#{toUser},</if>
+            <if test="fileState != null">#{fileState},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
+    </insert>
+    <!--    <insert id="insertSysMarkFile" parameterType="SysMarkFile" useGeneratedKeys="true" keyProperty="fileId">
+            insert into sys_MarkFile
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="filedirId != null">filedir_id,</if>
+                <if test="fileName != null and fileName != ''">file_name,</if>
+                <if test="fileSize != null">file_size,</if>
+                <if test="filePath != null">file_path,</if>
+                <if test="toUser != null">to_user,</if>
+                <if test="fileState != null">file_state,</if>
+                <if test="createTime != null">create_time,</if>
+             </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="filedirId != null">#{filedirId},</if>
+                <if test="fileName != null and fileName != ''">#{fileName},</if>
+                <if test="fileSize != null">#{fileSize},</if>
+                <if test="filePath != null">#{filePath},</if>
+                <if test="toUser != null">#{toUser},</if>
+                <if test="fileState != null">#{fileState},</if>
+                <if test="createTime != null">#{createTime},</if>
+             </trim>
+        </insert>-->
+
+    <update id="updateSysMarkFile" parameterType="SysMarkFile">
+        update sys_MarkFile
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fileState != null">file_state = #{fileState},</if>
+        </trim>
+        where file_id != ''
+        <if test="filePath != null  and filePath != ''"> and file_path like concat('%', #{filePath}, '%')</if>
+    </update>
+
+    <update id="updateStateSysMarkFileByFileDirId" >
+     UPDATE sys_MarkFile s
+        SET s.file_state =  #{file_state}
+        WHERE
+            filedir_id IN (
+                SELECT
+                    filedir_id
+                FROM
+                    sys_filedir
+                WHERE
+                    find_in_set( #{filedirId}, ancestors)
+                OR filedir_id =  #{filedirId}
+            )
+    </update>
+
+    <delete id="deleteSysMarkFileByFileId" parameterType="Long">
+        delete from sys_MarkFile where file_id = #{fileId}
+    </delete>
+
+    <delete id="deleteSysMarkFileByFileIds" parameterType="String">
+        delete from sys_MarkFile where file_id in
+        <foreach item="fileId" collection="array" open="(" separator="," close=")">
+            #{fileId}
+        </foreach>
+    </delete>
+
+</mapper>

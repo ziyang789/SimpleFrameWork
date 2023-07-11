@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guoyin.system.mapper.SysBeFileMapper">
+
+    <resultMap type="SysBeFile" id="SysBeFileResult">
+        <result property="fileId"    column="file_id"    />
+        <result property="filedirId"    column="filedir_id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="fileSize"    column="file_size"    />
+        <result property="filePath"    column="file_path"    />
+        <result property="toUser"    column="to_user"    />
+        <result property="fileState"    column="file_state"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="remark"    column="remark"    />
+        <association property="sysDir"     column="filedir_id" javaType="SysDir" resultMap="deptResult" />
+    </resultMap>
+
+    <resultMap id="deptResult" type="SysDir">
+        <id     property="filedirId"   column="filedir_id"     />
+        <result property="parentId" column="parent_id"   />
+        <result property="filedirName" column="filedir_name"   />
+        <result property="orderNum" column="order_num"   />
+    </resultMap>
+
+    <sql id="selectSysBeFileVo">
+        select file_id, filedir_id, file_name, file_size, file_path, to_user, file_state, create_time, remark from sys_BeFile
+    </sql>
+
+    <select id="selectSysBeFile" parameterType="SysBeFile" resultMap="SysBeFileResult">
+        select file_name from sys_BeFile
+        <where>
+            <if test="filedirId != null  and filedirId != ''"> and filedir_id = #{filedirId}</if>
+        </where>
+    </select>
+
+    <select id="selectSysBeFileList" parameterType="SysBeFile" resultMap="SysBeFileResult">
+        select b.file_id, b.filedir_id, b.file_name, b.file_size, b.file_path, b.to_user, b.file_state, b.create_time, b.remark, d.filedir_name from sys_BeFile b
+        left join sys_filedir d on b.filedir_id = d.filedir_id
+        where b.file_id != ''
+        <if test="fileName != null  and fileName != ''"> and b.file_name like concat('%', #{fileName}, '%')</if>
+        <if test="fileSize != null  and fileSize != ''"> and b.file_size like concat('%', #{fileSize}, '%')</if>
+        <if test="filePath != null  and filePath != ''"> and b.file_path like concat('%', #{filePath}, '%')</if>
+        <if test="toUser != null  and toUser != ''"> and b.to_user like concat('%', #{toUser}, '%')</if>
+        <if test="fileState != null  and fileState != ''"> and b.file_state = #{fileState}</if>
+        <if test="createTime != null  and createTime != ''"> and b.create_time = #{createTime}</if>
+        <if test="filedirId != null  and filedirId != 0"> and b.filedir_id = #{filedirId}</if>
+        <!--<if test="filedirId != null and filedirId != 0">
+            AND (b.filedir_id = #{filedirId} OR b.filedir_id IN ( SELECT t.filedir_id FROM sys_filedir t WHERE FIND_IN_SET (#{filedirId},ancestors) ))
+        </if>-->
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+    </select>
+
+    <select id="selectSysBeFileListByUser" parameterType="SysBeFile" resultMap="SysBeFileResult">
+        select b.file_id, b.filedir_id, b.file_name, b.file_size, b.file_path, b.to_user, b.file_state, b.create_time, b.remark, d.filedir_name from sys_BeFile b
+        left join sys_filedir d on b.filedir_id = d.filedir_id
+        where b.file_id != ''
+        <if test="filedirId != null "> and b.filedir_id = #{filedirId}</if>
+        <if test="fileName != null  and fileName != ''"> and b.file_name like concat('%', #{fileName}, '%')</if>
+        <if test="fileSize != null  and fileSize != ''"> and b.file_size like concat('%', #{fileSize}, '%')</if>
+        <if test="filePath != null  and filePath != ''"> and b.file_path like concat('%', #{filePath}, '%')</if>
+        <if test="toUser != null  and toUser != ''"> and b.to_user like concat('%', #{toUser}, '%')</if>
+        <if test="fileState != null  and fileState != ''"> and b.file_state = #{fileState}</if>
+        <if test="createTime != null  and createTime != ''"> and b.create_time = #{createTime}</if>
+        <if test="filedirId != null and filedirId != ''"> and b.filedir_id = #{filedirId}</if>
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+    </select>
+
+
+    <select id="selectSysBeFileByFileId" parameterType="Long" resultMap="SysBeFileResult">
+        <include refid="selectSysBeFileVo"/>
+        where file_id = #{fileId}
+    </select>
+    <select id="selectSysBeFileByFileNameAndFileDirId" resultMap="SysBeFileResult">
+        <include refid="selectSysBeFileVo"/>
+        where file_name =  #{fileName} and filedir_id = #{fileDirId}
+    </select>
+
+    <insert id="insertSysBeFile" parameterType="SysBeFile" useGeneratedKeys="true" keyProperty="fileId">
+        insert into sys_BeFile
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="filedirId != null">filedir_id,</if>
+            <if test="fileName != null and fileName != ''">file_name,</if>
+            <if test="fileSize != null">file_size,</if>
+            <if test="filePath != null">file_path,</if>
+            <if test="toUser != null">to_user,</if>
+            <if test="fileState != null">file_state,</if>
+            <if test="createTime != null">create_time,</if>
+
+            <if test="remark != null">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="filedirId != null">#{filedirId},</if>
+            <if test="fileName != null and fileName != ''">#{fileName},</if>
+            <if test="fileSize != null">#{fileSize},</if>
+            <if test="filePath != null">#{filePath},</if>
+            <if test="toUser != null">#{toUser},</if>
+            <if test="fileState != null">#{fileState},</if>
+            <if test="createTime != null">#{createTime},</if>
+
+            <if test="remark != null">#{remark},</if>
+        </trim>
+    </insert>
+<!--    <insert id="insertSysBeFile" parameterType="SysBeFile" useGeneratedKeys="true" keyProperty="fileId">
+        insert into sys_BeFile
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="filedirId != null">filedir_id,</if>
+            <if test="fileName != null and fileName != ''">file_name,</if>
+            <if test="fileSize != null">file_size,</if>
+            <if test="filePath != null">file_path,</if>
+            <if test="toUser != null">to_user,</if>
+            <if test="fileState != null">file_state,</if>
+            <if test="createTime != null">create_time,</if>
+
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="filedirId != null">#{filedirId},</if>
+            <if test="fileName != null and fileName != ''">#{fileName},</if>
+            <if test="fileSize != null">#{fileSize},</if>
+            <if test="filePath != null">#{filePath},</if>
+            <if test="toUser != null">#{toUser},</if>
+            <if test="fileState != null">#{fileState},</if>
+            <if test="createTime != null">#{createTime},</if>
+
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>-->
+
+    <update id="updateSysBeFile" parameterType="SysBeFile">
+        update sys_BeFile
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fileState != null">file_state = #{fileState},</if>
+        </trim>
+        where file_id != ''
+        <if test="filePath != null  and filePath != ''"> and file_path like concat('%', #{filePath}, '%')</if>
+    </update>
+
+    <update id="updateSysBeFileTouser" parameterType="SysBeFile">
+        update sys_BeFile
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="toUser != null">to_user = #{toUser},</if>
+        </trim>
+        where file_id = #{fileId}
+    </update>
+
+    <update id="updateSysBeFileByFileDir" parameterType="SysBeFile">
+        update sys_BeFile
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="toUser != null">to_user = #{toUser},</if>
+        </trim>
+        where file_path like concat('%', #{filePath}, '%')
+    </update>
+
+
+    <update id="updateToUseByFileDirId" parameterType="SysBeFile">
+        update sys_BeFile
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="toUser != null">to_user = #{toUser},</if>
+        </trim>
+        where filedir_id =#{filedirId}
+    </update>
+
+    <update id="updateStateSysFileByFileDirId" >
+        UPDATE sys_befile s
+        SET s.file_state =  #{file_state}
+        WHERE
+            filedir_id IN (
+                SELECT
+                    filedir_id
+                FROM
+                    sys_filedir
+                WHERE
+                    find_in_set( #{filedirId}, ancestors)
+                OR filedir_id =  #{filedirId}
+            )
+    </update>
+
+
+    <delete id="deleteSysBeFileByFileId" parameterType="Long">
+        delete from sys_BeFile where file_id = #{fileId}
+    </delete>
+
+    <delete id="deleteSysBeFileByFileIds" parameterType="String">
+        delete from sys_BeFile where file_id in
+        <foreach item="fileId" collection="array" open="(" separator="," close=")">
+            #{fileId}
+        </foreach>
+    </delete>
+
+</mapper>

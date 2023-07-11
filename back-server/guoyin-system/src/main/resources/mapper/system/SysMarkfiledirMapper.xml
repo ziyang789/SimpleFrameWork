@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guoyin.system.mapper.SysMarkfiledirMapper">
+
+    <resultMap type="SysMarkfiledir" id="SysMarkfiledirResult">
+        <result property="filedirId"    column="filedir_id"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="ancestors"    column="ancestors"    />
+        <result property="filedirName"    column="filedir_name"    />
+        <result property="absolutPath"    column="absolut_path"    />
+        <result property="relativePath"    column="relative_path"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="leader"    column="leader"    />
+        <result property="phone"    column="phone"    />
+        <result property="email"    column="email"    />
+        <result property="status"    column="status"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="parentName" column="parent_name" />
+    </resultMap>
+
+    <sql id="selectSysMarkfiledirVo">
+        select filedir_id, parent_id, ancestors, filedir_name, absolut_path, relative_path, order_num, leader, phone, email, status, del_flag, create_by, create_time, update_by, update_time from sys_markfiledir
+    </sql>
+
+    <select id="selectSysMarkfiledirList" parameterType="SysMarkfiledir" resultMap="SysMarkfiledirResult">
+        <include refid="selectSysMarkfiledirVo"/>
+        <where>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="ancestors != null  and ancestors != ''"> and ancestors = #{ancestors}</if>
+            <if test="filedirName != null  and filedirName != ''"> and filedir_name like concat('%', #{filedirName}, '%')</if>
+            <if test="absolutPath != null  and absolutPath != ''"> and absolut_path = #{absolutPath}</if>
+            <if test="relativePath != null  and relativePath != ''"> and relative_path = #{relativePath}</if>
+            <if test="orderNum != null "> and order_num = #{orderNum}</if>
+            <if test="leader != null  and leader != ''"> and leader = #{leader}</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="email != null  and email != ''"> and email = #{email}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+        order by parent_id
+    </select>
+
+    <select id="selectSysMarkfiledirByFiledirId" parameterType="Long" resultMap="SysMarkfiledirResult">
+        select t.filedir_id, t.parent_id, t.ancestors, t.filedir_name, t.absolut_path, t.relative_path, t.order_num, t.leader, t.phone, t.email, t.status, t.del_flag, t.create_by, t.create_time, t.update_by, t.update_time, p.filedir_name as parent_name
+        from sys_markfiledir t
+        left join sys_markfiledir p on p.filedir_id = t.parent_id
+        where t.filedir_id = #{filedirId}
+    </select>
+
+    <insert id="insertSysMarkfiledir" parameterType="SysMarkfiledir" useGeneratedKeys="true" keyProperty="filedirId">
+        insert into sys_markfiledir
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">parent_id,</if>
+            <if test="ancestors != null">ancestors,</if>
+            <if test="filedirName != null">filedir_name,</if>
+            <if test="absolutPath != null">absolut_path,</if>
+            <if test="relativePath != null">relative_path,</if>
+            <if test="orderNum != null">order_num,</if>
+            <if test="leader != null">leader,</if>
+            <if test="phone != null">phone,</if>
+            <if test="email != null">email,</if>
+            <if test="status != null">status,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">#{parentId},</if>
+            <if test="ancestors != null">#{ancestors},</if>
+            <if test="filedirName != null">#{filedirName},</if>
+            <if test="absolutPath != null">#{absolutPath},</if>
+            <if test="relativePath != null">#{relativePath},</if>
+            <if test="orderNum != null">#{orderNum},</if>
+            <if test="leader != null">#{leader},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="email != null">#{email},</if>
+            <if test="status != null">#{status},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysMarkfiledir" parameterType="SysMarkfiledir">
+        update sys_markfiledir
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="ancestors != null">ancestors = #{ancestors},</if>
+            <if test="filedirName != null">filedir_name = #{filedirName},</if>
+            <if test="absolutPath != null">absolut_path = #{absolutPath},</if>
+            <if test="relativePath != null">relative_path = #{relativePath},</if>
+            <if test="orderNum != null">order_num = #{orderNum},</if>
+            <if test="leader != null">leader = #{leader},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where filedir_id = #{filedirId}
+    </update>
+
+    <delete id="deleteSysMarkfiledirByFiledirId" parameterType="Long">
+        delete from sys_markfiledir where filedir_id = #{filedirId}
+    </delete>
+
+    <delete id="deleteSysMarkfiledirByFiledirIds" parameterType="String">
+        delete from sys_markfiledir where filedir_id in
+        <foreach item="filedirId" collection="array" open="(" separator="," close=")">
+            #{filedirId}
+        </foreach>
+    </delete>
+
+    <select id="selectMarkDirById" parameterType="Long" resultMap="SysMarkfiledirResult">
+        select d.filedir_id,
+               d.parent_id,
+               d.ancestors,
+               d.filedir_name,
+               d.absolut_path,
+               d.relative_path,
+               d.order_num,
+               d.leader,
+               d.phone,
+               d.email,
+               d.status,
+               (select filedir_name from sys_markfiledir where filedir_id = d.parent_id) parent_name
+        from sys_markfiledir d
+        where d.filedir_id = #{filedirId}
+    </select>
+    <select id="selectDeptByRootPath" parameterType="String" resultMap="SysMarkfiledirResult">
+        select d.filedir_id,
+               d.parent_id,
+               d.ancestors,
+               d.filedir_name,
+               d.absolut_path,
+               d.relative_path,
+               d.order_num,
+               d.leader,
+               d.phone,
+               d.email,
+               d.status,
+               (select filedir_name from sys_markfiledir where filedir_id = d.parent_id) parent_name
+        from sys_markfiledir d
+        where d.absolut_path = #{rootPath}
+    </select>
+
+    <insert id="insertDeptAndReturnId" parameterType="SysMarkfiledir">
+        <selectKey keyProperty="filedirId" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID() as filedir_id
+        </selectKey>
+        insert into sys_markfiledir(
+        <if test="filedirId != null and filedirId != 0">filedir_id,</if>
+        <if test="parentId != null and parentId != 0">parent_id,</if>
+        <if test="filedirName != null and filedirName != ''">filedir_name,</if>
+        <if test="absolutPath != null and absolutPath != ''">absolut_path,</if>
+        <if test="relativePath != null and relativePath != ''">relative_path,</if>
+        <if test="ancestors != null and ancestors != ''">ancestors,</if>
+        <if test="orderNum != null and orderNum != ''">order_num,</if>
+        <if test="leader != null and leader != ''">leader,</if>
+        <if test="phone != null and phone != ''">phone,</if>
+        <if test="email != null and email != ''">email,</if>
+        <if test="status != null">status,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        create_time
+        )values(
+        <if test="filedirId != null and filedirId != 0">#{filedirId},</if>
+        <if test="parentId != null and parentId != 0">#{parentId},</if>
+        <if test="filedirName != null and filedirName != ''">#{filedirName},</if>
+        <if test="absolutPath != null and absolutPath != ''">#{absolutPath},</if>
+        <if test="relativePath != null and relativePath != ''">#{relativePath},</if>
+        <if test="ancestors != null and ancestors != ''">#{ancestors},</if>
+        <if test="orderNum != null and orderNum != ''">#{orderNum},</if>
+        <if test="leader != null and leader != ''">#{leader},</if>
+        <if test="phone != null and phone != ''">#{phone},</if>
+        <if test="email != null and email != ''">#{email},</if>
+        <if test="status != null">#{status},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        sysdate()
+        )
+    </insert>
+
+    <select id="selectChildrenAndMyselfDeptById" parameterType="Long" resultMap="SysMarkfiledirResult">
+        select *
+        from sys_markfiledir
+        where find_in_set(#{filedirId}, ancestors) or filedir_id = #{filedirId};
+    </select>
+</mapper>

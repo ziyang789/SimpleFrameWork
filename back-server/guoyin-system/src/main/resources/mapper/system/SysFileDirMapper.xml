@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guoyin.system.mapper.SysFileDirMapper">
+
+    <resultMap type="SysFileDir" id="SysFileDirResult">
+        <result property="filedirId"    column="filedir_id"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="ancestors"    column="ancestors"    />
+        <result property="filedirName"    column="filedir_name"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="leader"    column="leader"    />
+        <result property="phone"    column="phone"    />
+        <result property="email"    column="email"    />
+        <result property="status"    column="status"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSysFileDirVo">
+        select d.filedir_id, d.parent_id, d.ancestors, d.filedir_name, d.order_num, d.leader, d.phone, d.email, d.status, d.del_flag, d.create_by, d.create_time, d.update_by, d.update_time from sys_FileDir d
+    </sql>
+
+    <select id="selectSysFileDirList" parameterType="SysFileDir" resultMap="SysFileDirResult">
+        <include refid="selectSysFileDirVo"/>
+        <where>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="ancestors != null  and ancestors != ''"> and ancestors = #{ancestors}</if>
+            <if test="filedirName != null  and filedirName != ''"> and filedir_name like concat('%', #{filedirName}, '%')</if>
+            <if test="orderNum != null "> and order_num = #{orderNum}</if>
+            <if test="leader != null  and leader != ''"> and leader = #{leader}</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="email != null  and email != ''"> and email = #{email}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="selectSysFileDirByfiledirId" parameterType="Long" resultMap="SysFileDirResult">
+        <include refid="selectSysFileDirVo"/>
+        where filedir_id = #{filedirId}
+    </select>
+    <select id="selectSysFileDirByParentId" parameterType="Long" resultMap="SysFileDirResult">
+        <include refid="selectSysFileDirVo"/>
+        where parent_id = #{parentId}
+    </select>
+
+    <select id="selectFileDirName" parameterType="String" resultMap="SysFileDirResult">
+        select filedir_id, parent_id, ancestors from sys_FileDir
+        where filedir_name = #{filedirName}
+    </select>
+
+    <insert id="insertSysFileDir" parameterType="SysFileDir" useGeneratedKeys="true" keyProperty="filedirId">
+        insert into sys_FileDir
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">parent_id,</if>
+            <if test="ancestors != null">ancestors,</if>
+            <if test="filedirName != null">filedir_name,</if>
+            <if test="orderNum != null">order_num,</if>
+            <if test="leader != null">leader,</if>
+            <if test="phone != null">phone,</if>
+            <if test="email != null">email,</if>
+            <if test="status != null">status,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">#{parentId},</if>
+            <if test="ancestors != null">#{ancestors},</if>
+            <if test="filedirName != null">#{filedirName},</if>
+            <if test="orderNum != null">#{orderNum},</if>
+            <if test="leader != null">#{leader},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="email != null">#{email},</if>
+            <if test="status != null">#{status},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysFileDir" parameterType="SysFileDir">
+        update sys_FileDir
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="ancestors != null">ancestors = #{ancestors},</if>
+            <if test="filedirName != null">filedir_name = #{filedirName},</if>
+            <if test="orderNum != null">order_num = #{orderNum},</if>
+            <if test="leader != null">leader = #{leader},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where filedir_id = #{filedirId}
+    </update>
+
+    <delete id="deleteSysFileDirByfiledirId" parameterType="Long">
+        delete from sys_FileDir where filedir_id = #{filedirId}
+    </delete>
+
+    <delete id="deleteSysFileDirByfiledirIds" parameterType="String">
+        delete from sys_FileDir where filedir_id in
+        <foreach item="filedirId" collection="array" open="(" separator="," close=")">
+            #{filedirId}
+        </foreach>
+    </delete>
+
+    <select id="selectDeptList" parameterType="SysFileDir" resultMap="SysFileDirResult">
+        <include refid="selectSysFileDirVo"/>
+        where d.del_flag = '0'
+        <if test="filedirId != null and filedirId != 0">
+            AND filedir_id = #{filedirId}
+        </if>
+        <if test="parentId != null and parentId != 0">
+            AND parent_id = #{parentId}
+        </if>
+        <if test="filedirName != null and filedirName != ''">
+            AND filedir_name like concat('%', #{filedirName}, '%')
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+        order by d.parent_id, d.order_num
+    </select>
+
+</mapper>
